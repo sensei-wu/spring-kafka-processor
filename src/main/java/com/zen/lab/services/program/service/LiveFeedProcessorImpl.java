@@ -20,11 +20,12 @@ public class LiveFeedProcessorImpl implements LiveFeedProcessor {
     @Timed("livefeed.Processed.timer")
     public void process(String message, long offset) throws Exception {
 
-        //simulate a latency => watchout the log meanwhile
+        //simulate a latency => watchout the consumer lag meanwhile
         TimeUnit.MILLISECONDS.sleep(MIN_SLEEP_MS + (MAX_SLEEP_MS - MIN_SLEEP_MS) * ThreadLocalRandom.current().nextInt(1));
 
+        //simulate an exception
         if(offset%8 == 0) {
-            //simulate a timeout => watchout the log meanwhile
+            //simulate a timeout => watchout the lag meanwhile
             TimeUnit.SECONDS.sleep(10);
             throw new Exception(String.format("Oops, we can't process messages with offset multiple of 8 -- offset %d, message %s", offset, message));
         }
