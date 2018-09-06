@@ -18,10 +18,13 @@ Create a kafka topic named live-sports-feed, with 3 or more partitions
 
 ### Installing
 
+- mvn clean install
 
 ## Running
 
-Just build and install the project using maven and run the class `Application`
+- Start Zookeeper
+- Start Kafka cluster
+- Run the class `Application`
 
 
 ## Built With
