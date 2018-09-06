@@ -2,7 +2,7 @@
 
 This is a working Sports Program and betting application using Java 8, Spring platform, Spring Kafka.
 
-This application consumes data feeds from the goven kafka topic. 
+This application consumes data feeds from the given kafka topic. 
 
 Listeners are implemented using Spring Kafka. Type of listeners and various parameters are configurable
 
@@ -21,7 +21,7 @@ Create a kafka topic named live-sports-feed, with 3 or more partitions
 
 ## Running
 
-Just build and install the project using maven and run the class `SportsFeedGeneratorApplication`
+Just build and install the project using maven and run the class `Application`
 
 
 ## Built With
