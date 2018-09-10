@@ -9,3 +9,8 @@ pojoListener:
   enabled: false
 messageListener:
   implementation: batchListener
+livefeed:
+  processor:
+    minSleep: 100
+    maxSleep: 500
+    errorTimeOut: 1000

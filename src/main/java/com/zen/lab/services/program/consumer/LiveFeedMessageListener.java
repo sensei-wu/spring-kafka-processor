@@ -22,7 +22,7 @@ public class LiveFeedMessageListener implements MessageListener<String, String> 
     public void onMessage(ConsumerRecord<String, String> data) {
         LOGGER.info("Received a message {} ", data);
         try {
-            liveFeedProcessor.process(data.value(), data.offset());
+            liveFeedProcessor.process(data.key(), data.value(), data.offset());
         } catch (Exception e) {
             LOGGER.error("Caught exception for offset {}", data.offset());
         }

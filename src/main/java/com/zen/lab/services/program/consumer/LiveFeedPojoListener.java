@@ -32,7 +32,7 @@ public class LiveFeedPojoListener {
         LOGGER.info("Processing Message -- Partition {}, Offset {}, Key {}", partitionId, offset, messageKey);
 
         try {
-            liveFeedProcessor.process(message, offset);
+            liveFeedProcessor.process(messageKey, message, offset);
         } catch (Exception e) {
             e.printStackTrace();
         }

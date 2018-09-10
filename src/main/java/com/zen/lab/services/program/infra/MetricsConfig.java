@@ -10,7 +10,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @Configuration
 @EnableAspectJAutoProxy
 public class MetricsConfig {
-
     @Bean
     public TimedAspect timedAspect(MeterRegistry meterRegistry) {
         return new TimedAspect(meterRegistry);

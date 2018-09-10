@@ -1,23 +1,39 @@
 package com.zen.lab.services.program.consumer;
 
+import com.zen.lab.services.program.service.LiveFeedProcessor;
+
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.listener.BatchAcknowledgingConsumerAwareMessageListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class LiveFeedBatchListener implements BatchAcknowledgingConsumerAwareMessageListener<String, String> {
 
-    private final Logger LOGGER = Logger.getLogger(LiveFeedBatchListener.class.getName());
+    private final Logger LOGGER = LoggerFactory.getLogger(LiveFeedBatchListener.class.getName());
+
+    private final LiveFeedProcessor liveFeedProcessor;
+
+    @Autowired
+    public LiveFeedBatchListener(LiveFeedProcessor liveFeedProcessor) {this.liveFeedProcessor = liveFeedProcessor;}
 
     @Override
     public void onMessage(List<ConsumerRecord<String, String>> data, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
         for(ConsumerRecord cr : data) {
             LOGGER.info((String) cr.value());
+            try {
+                liveFeedProcessor.process((String) cr.key(), (String) cr.value(), cr.offset());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
