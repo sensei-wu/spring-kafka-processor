@@ -35,7 +35,6 @@ public class LiveFeedProcessorImpl implements LiveFeedProcessor {
         this.metricService = metricService;
     }
 
-
     @Override
     //@Timed("livefeed.Processed.timer") // => doesn't work, under investigation
     public void process(String key, String message, long offset) throws Exception {
