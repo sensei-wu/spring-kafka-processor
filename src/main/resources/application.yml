@@ -5,12 +5,15 @@ management:
     web:
       exposure:
         include: "*"
+  endpoint:
+    prometheus:
+      enabled: true
 pojoListener:
   enabled: false
 messageListener:
   implementation: batchListener
 livefeed:
   processor:
-    minSleep: 100
-    maxSleep: 500
-    errorTimeOut: 1000
+    minSleep: 500
+    maxSleep: 5000
+    errorTimeOut: 50
