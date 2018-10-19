@@ -69,4 +69,16 @@ public class Group {
             return instance;
         }
     }
+
+    @Override
+    public String toString() {
+        return "Group{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", parent=" + parent +
+                ", sportType=" + sportType +
+                ", regionType=" + regionType +
+                ", competitionType=" + competitionType +
+                '}';
+    }
 }

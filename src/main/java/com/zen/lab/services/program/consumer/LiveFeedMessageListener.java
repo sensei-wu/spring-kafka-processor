@@ -1,5 +1,6 @@
 package com.zen.lab.services.program.consumer;
 
+import com.zen.lab.services.program.model.Event;
 import com.zen.lab.services.program.service.LiveFeedProcessor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -9,7 +10,7 @@ import org.springframework.kafka.listener.MessageListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LiveFeedMessageListener implements MessageListener<String, String> {
+public class LiveFeedMessageListener implements MessageListener<String, Event> {
 
     private static Logger LOGGER = LoggerFactory.getLogger(LiveFeedMessageListener.class);
 
@@ -19,7 +20,7 @@ public class LiveFeedMessageListener implements MessageListener<String, String> 
     public LiveFeedMessageListener(LiveFeedProcessor liveFeedProcessor) {this.liveFeedProcessor = liveFeedProcessor;}
 
     @Override
-    public void onMessage(ConsumerRecord<String, String> data) {
+    public void onMessage(ConsumerRecord<String, Event> data) {
         LOGGER.info("Received a message {} ", data);
         try {
             liveFeedProcessor.process(data.key(), data.value(), data.offset());

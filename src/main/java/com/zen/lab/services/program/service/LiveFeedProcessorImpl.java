@@ -1,7 +1,7 @@
 package com.zen.lab.services.program.service;
 
 import com.zen.lab.services.program.infra.service.MetricService;
-import io.micrometer.core.instrument.Timer;
+import com.zen.lab.services.program.model.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,25 +25,30 @@ public class LiveFeedProcessorImpl implements LiveFeedProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LiveFeedProcessorImpl.class);
 
+    private final LiveFeedStoreClient liveFeedStoreClient;
+
     private final MetricService metricService;
 
     private final static String METRICS_PROCESSED_SUCCESS_NAME = LiveFeedProcessorImpl.class.getSimpleName() + ".processed";
     private final static String METRICS_PROCESSED_ERROR_NAME = LiveFeedProcessorImpl.class.getSimpleName() + ".error";
 
     @Autowired
-    public LiveFeedProcessorImpl(MetricService metricService) {
+    public LiveFeedProcessorImpl(LiveFeedStoreClient liveFeedStoreClient, MetricService metricService) {
+        this.liveFeedStoreClient = liveFeedStoreClient;
         this.metricService = metricService;
     }
 
     @Override
     //@Timed("livefeed.Processed.timer") // => doesn't work, under investigation
-    public void process(String key, String message, long offset) throws Exception {
+    public void process(String key, Event message, long offset) throws Exception {
 
         LocalTime begin = LocalTime.now();
         long sleep = MIN_SLEEP_MS + (long) ((MAX_SLEEP_MS - MIN_SLEEP_MS) * ThreadLocalRandom.current().nextDouble(1.0d));
         LOGGER.trace("SLEEP {}: ", sleep);
         //simulate a latency => watchout the consumer lag meanwhile
         TimeUnit.MILLISECONDS.sleep(sleep);
+
+        liveFeedStoreClient.createEvent(message.getFixtureId(), message);
 
         //simulate an exception
         if(offset%8 == 0) {
@@ -57,6 +62,6 @@ public class LiveFeedProcessorImpl implements LiveFeedProcessor {
                 Duration.between(begin, LocalTime.now()),
                 "sportType", key);
 
-        LOGGER.info("Processed Message with offset {}: length {}, hashCode {}", offset, message.length(), message.hashCode());
+        LOGGER.info("Processed Message with offset {}: hashCode {}", offset, message.hashCode());
     }
 }

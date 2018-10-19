@@ -1,5 +1,7 @@
 package com.zen.lab.services.program.service;
 
+import com.zen.lab.services.program.model.Event;
+
 public interface LiveFeedProcessor {
 
     /**
@@ -9,5 +11,5 @@ public interface LiveFeedProcessor {
      * @param offset
      * @throws Exception
      */
-    void process(String key, String message, long offset) throws Exception;
+    void process(String key, Event message, long offset) throws Exception;
 }

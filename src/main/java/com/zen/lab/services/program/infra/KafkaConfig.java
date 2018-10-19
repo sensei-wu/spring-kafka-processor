@@ -1,7 +1,11 @@
 package com.zen.lab.services.program.infra;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.zen.lab.services.program.consumer.LiveFeedBatchListener;
 import com.zen.lab.services.program.consumer.LiveFeedMessageListener;
+import com.zen.lab.services.program.model.Event;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -18,6 +22,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.AbstractMessageListenerContainer;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.config.ContainerProperties;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,8 +46,8 @@ public class KafkaConfig {
     //In-order to use @KafkaListener, we need a bean with the name kafkaListenerContainerFactory
     @Bean
     @ConditionalOnProperty(value = "pojoListener.enabled")
-    KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, Event>> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, Event> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         factory.setConcurrency(3);
         factory.getContainerProperties().setPollTimeout(3000);
@@ -51,8 +56,8 @@ public class KafkaConfig {
     }
 
     @Bean
-    ConcurrentMessageListenerContainer<String, String> sportsFeedListenerContainer() throws Exception {
-        ConsumerFactory<String, String> cf = consumerFactory();
+    ConcurrentMessageListenerContainer<String, Event> sportsFeedListenerContainer() throws Exception {
+        ConsumerFactory<String, Event> cf = consumerFactory();
         ContainerProperties cp = new ContainerProperties(KafkaProperties.TOPIC_LIVE_FEED);
 
         switch (messageListenerImplementation) {
@@ -67,14 +72,14 @@ public class KafkaConfig {
                 throw new Exception("No listener configured");
         }
 
-        ConcurrentMessageListenerContainer<String, String> concurrentMessageListenerContainer = new ConcurrentMessageListenerContainer<>(cf,cp);
+        ConcurrentMessageListenerContainer<String, Event> concurrentMessageListenerContainer = new ConcurrentMessageListenerContainer<>(cf,cp);
         concurrentMessageListenerContainer.setConcurrency(3);
 
         return concurrentMessageListenerContainer;
     }
 
-    private ConsumerFactory<String, String> consumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs(), stringKeyDeserializer(), stringKeyDeserializer());
+    private ConsumerFactory<String, Event> consumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(), stringKeyDeserializer(), jsonValueDeserializer());
     }
 
     private Map<String, Object> consumerConfigs() {
@@ -87,5 +92,13 @@ public class KafkaConfig {
     @Bean
     public Deserializer<String> stringKeyDeserializer() {
         return new StringDeserializer();
+    }
+
+    @Bean
+    public Deserializer<Event> jsonValueDeserializer() {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        return new JsonDeserializer<>(Event.class, objectMapper);
     }
 }

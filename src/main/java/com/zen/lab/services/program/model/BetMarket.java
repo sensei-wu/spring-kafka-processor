@@ -5,21 +5,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class BetMarket {
-    private static AtomicLong betmarketId = new AtomicLong(0);
+    private Long betmarketId;
     private BetMarketType betMarketType;
     @JsonIgnore
     private Event event;
     private BetMarketStatus betMarketStatus;
 
-    private BetMarket() {
-        betmarketId.incrementAndGet();
-    }
+    private BetMarket() {}
 
     public static Builder builder() {
         return new BetMarket.Builder();
     }
 
-    public long getBetmarketId() { return betmarketId.get(); }
+    public long getBetmarketId() { return betmarketId; }
 
     public BetMarketType getBetMarketType() {
         return betMarketType;
@@ -57,5 +55,15 @@ public class BetMarket {
         public BetMarket build() {
             return instance;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "BetMarket{" +
+                "betmarketId=" + betmarketId +
+                ", betMarketType=" + betMarketType +
+                ", event=" + event +
+                ", betMarketStatus=" + betMarketStatus +
+                '}';
     }
 }

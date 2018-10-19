@@ -1,8 +1,9 @@
 package com.zen.lab.services.program.consumer;
 
 import com.zen.lab.services.program.infra.service.impl.MicrometerMetricServiceImpl;
+import com.zen.lab.services.program.model.Event;
 import com.zen.lab.services.program.service.LiveFeedProcessorImpl;
-import io.micrometer.core.instrument.MeterRegistry;
+import com.zen.lab.services.program.service.LiveFeedStoreClient;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -36,8 +37,13 @@ public class LiveFeedPojoListenerTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LiveFeedPojoListenerTest.class);
 
-    private LiveFeedPojoListener liveFeedPojoListener = new LiveFeedPojoListener(new LiveFeedProcessorImpl(
-            new MicrometerMetricServiceImpl(new SimpleMeterRegistry())));
+    private LiveFeedPojoListener liveFeedPojoListener =
+            new LiveFeedPojoListener(new LiveFeedProcessorImpl(new LiveFeedStoreClient() {
+                @Override
+                public Event createEvent(Long eventId, Event event) {
+                    return null;
+                }
+            }, new MicrometerMetricServiceImpl(new SimpleMeterRegistry())));
 
     @ClassRule
     public static KafkaEmbedded embeddedKafka = new KafkaEmbedded(2, true, 2, "messages");

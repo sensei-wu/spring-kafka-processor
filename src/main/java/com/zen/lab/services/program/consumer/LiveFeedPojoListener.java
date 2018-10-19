@@ -1,6 +1,7 @@
 package com.zen.lab.services.program.consumer;
 
 import com.zen.lab.services.program.infra.KafkaProperties;
+import com.zen.lab.services.program.model.Event;
 import com.zen.lab.services.program.service.LiveFeedProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ public class LiveFeedPojoListener {
     public LiveFeedPojoListener(LiveFeedProcessor liveFeedProcessor) {this.liveFeedProcessor = liveFeedProcessor;}
 
     @KafkaListener(topics = KafkaProperties.TOPIC_LIVE_FEED)
-    public void listen(String message,
+    public void listen(Event message,
                        @Header(KafkaHeaders.OFFSET) Integer offset,
                        @Header(KafkaHeaders.RECEIVED_PARTITION_ID) Integer partitionId,
                        @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String messageKey,

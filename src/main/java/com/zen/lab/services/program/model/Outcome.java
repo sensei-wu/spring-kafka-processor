@@ -5,14 +5,12 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Outcome {
-    private static AtomicLong outcomeId = new AtomicLong(0);
+    private Long outcomeId;
     private BetMarket betMarket;
     private String name;
     private BigDecimal odds;
 
-    private Outcome() {
-        outcomeId.incrementAndGet();
-    }
+    private Outcome() {}
 
     public static Builder builder() {
         return new Outcome.Builder();
@@ -46,5 +44,15 @@ public class Outcome {
         public Outcome build() {
             return instance;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Outcome{" +
+                "outcomeId=" + outcomeId +
+                ", betMarket=" + betMarket +
+                ", name='" + name + '\'' +
+                ", odds=" + odds +
+                '}';
     }
 }

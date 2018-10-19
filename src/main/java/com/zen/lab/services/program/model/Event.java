@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Event {
-    private static AtomicLong fixtureId = new AtomicLong(0);
+    private Long fixtureId;
     private SportType sportType;
     private String home;
     private String away;
@@ -15,12 +15,10 @@ public class Event {
     private Provider provider;
     private Instant startsAt;
 
-    private Event() {
-        fixtureId.incrementAndGet();
-    }
+    private Event() {}
 
     public long getFixtureId() {
-        return fixtureId.get();
+        return fixtureId;
     }
 
     public SportType getSportType() {
@@ -99,5 +97,19 @@ public class Event {
             return instance;
         }
 
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "fixtureId=" + fixtureId +
+                ", sportType=" + sportType +
+                ", home='" + home + '\'' +
+                ", away='" + away + '\'' +
+                ", marketList=" + marketList +
+                ", group=" + group +
+                ", provider=" + provider +
+                ", startsAt=" + startsAt +
+                '}';
     }
 }
